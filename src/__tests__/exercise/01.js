@@ -5,6 +5,14 @@ import * as React from 'react'
 import ReactDOM from 'react-dom'
 import Counter from '../../components/counter'
 
+function getNewMouseEvent() {
+  return new MouseEvent('click', {
+    bubbles: true,
+    cancelable: true,
+    button: 0,
+  })
+}
+
 test('counter increments and decrements when the buttons are clicked', () => {
   const container = document.createElement('div')
   document.body.append(container)
@@ -17,10 +25,10 @@ test('counter increments and decrements when the buttons are clicked', () => {
   const message = container.firstChild.querySelector('div')
   expect(message.textContent).toBe('Current count: 0')
 
-  buttons[1].click()
+  buttons[1].dispatchEvent(getNewMouseEvent())
   expect(message.textContent).toBe('Current count: 1')
 
-  buttons[0].click()
+  buttons[0].dispatchEvent(getNewMouseEvent())
   expect(message.textContent).toBe('Current count: 0')
   container.remove()
 })
