@@ -5,10 +5,11 @@ import * as React from 'react'
 import {render, screen, act, waitForElementToBeRemoved} from '@testing-library/react'
 import Location from '../../examples/location'
 
-const mockCurrentPosition = jest.fn()
-window.navigator.geolocation = {
-  getCurrentPosition: mockCurrentPosition,
-}
+beforeAll(() => {
+  window.navigator.geolocation = {
+    getCurrentPosition: jest.fn(),
+  }
+})
 
 function deferred() {
   let resolve, reject
@@ -22,24 +23,29 @@ function deferred() {
 test('displays the current location of the user', async () => {
   const fakePosition = {
     coords: {
-      latitude: 100,
-      longitude: 150,
+      latitude: 32,
+      longitude: 129,
     },
   }
 
-  const {promise, resolve, reject} = deferred()
+  const {promise, resolve} = deferred()
 
-  mockCurrentPosition.mockImplementation((success, error) => {
+  window.navigator.geolocation.getCurrentPosition.mockImplementation((success, error) => {
     promise.then(() => success(fakePosition))
   })
 
   render( <Location /> )
   expect(screen.getByLabelText(/loading/i)).toBeInTheDocument()
 
-  resolve()
-  await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
-  expect(screen.getByText(fakePosition.coords.latitude, {exact: false})).toBeInTheDocument()
-  expect(screen.getByText(fakePosition.coords.longitude, {exact: false})).toBeInTheDocument()
+  await act(async () => resolve())
+  await promise
+  expect(screen.queryByLabelText(/loading/i)).not.toBeInTheDocument()
+  expect(screen.getByText(/latitude/i)).toHaveTextContent(
+    `Latitude: ${fakePosition.coords.latitude}`
+  )
+  expect(screen.getByText(/longitude/i)).toHaveTextContent(
+    `Longitude: ${fakePosition.coords.longitude}`
+  )
 })
 
 /*
