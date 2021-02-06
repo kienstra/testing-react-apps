@@ -40,7 +40,6 @@ test('displays the current location of the user', async () => {
     `Longitude: ${mockPosition.coords.longitude}`
   )
 
-
   const error = {message: 'Uf, something went really wrong'}
   act(() => {
     setReturnValue([[], error])
