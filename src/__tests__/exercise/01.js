@@ -21,14 +21,14 @@ test('counter increments and decrements when the buttons are clicked', () => {
     container
   )
 
-  const buttons = container.querySelectorAll('button')
+  const [decrement, increment] = container.querySelectorAll('button')
   const message = container.firstChild.querySelector('div')
   expect(message.textContent).toBe('Current count: 0')
 
-  buttons[1].dispatchEvent(getNewMouseEvent())
+  increment.dispatchEvent(getNewMouseEvent())
   expect(message.textContent).toBe('Current count: 1')
 
-  buttons[0].dispatchEvent(getNewMouseEvent())
+  decrement.dispatchEvent(getNewMouseEvent())
   expect(message.textContent).toBe('Current count: 0')
   container.remove()
 })
