@@ -39,6 +39,15 @@ test('displays the current location of the user', async () => {
   expect(screen.getByText(/longitude/i)).toHaveTextContent(
     `Longitude: ${mockPosition.coords.longitude}`
   )
+
+
+  const error = {message: 'Uf, something went really wrong'}
+  act(() => {
+    setReturnValue([[], error])
+  })
+
+  expect(screen.getByRole('alert')).toHaveTextContent(error.message)
+  expect(screen.queryByText(/latitude/i)).not.toBeInTheDocument()
 })
 
 /*
