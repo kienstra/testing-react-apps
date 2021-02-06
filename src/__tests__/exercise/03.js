@@ -7,13 +7,14 @@ import {fireEvent, render, screen} from '@testing-library/react'
 import Counter from '../../components/counter'
 
 test('counter increments and decrements when the buttons are clicked', () => {
-  const {container} = render(<Counter />)
+  render(<Counter />)
   const decrement = screen.getByRole('button', {name: /decrement/i})
   const increment = screen.getByRole('button', {name: /increment/i})
+  const message = screen.getByText(/current count/i)
 
-  expect(container).toHaveTextContent('Current count: 0')
+  expect(message).toHaveTextContent('Current count: 0')
   fireEvent.click(increment)
-  expect(container).toHaveTextContent('Current count: 1')
+  expect(message).toHaveTextContent('Current count: 1')
   fireEvent.click(decrement)
-  expect(container).toHaveTextContent('Current count: 0')
+  expect(message).toHaveTextContent('Current count: 0')
 })
