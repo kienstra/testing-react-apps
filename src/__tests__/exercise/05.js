@@ -21,6 +21,7 @@ const server = setupServer(...handlers)
 
 beforeAll(() => server.listen())
 afterAll(() => server.close())
+afterEach(() => server.resetHandlers())
 
 test(`logging in displays the user's username`, async () => {
   render(<Login />)
@@ -49,7 +50,6 @@ test(`not entering a password displays a message`, async () => {
 })
 
 test(`handles a 500 response from the server`, async () => {
-  const {username, password} = buildLoginForm()
   const errorMessage = 'there was an error'
 
   server.use(
@@ -63,8 +63,6 @@ test(`handles a 500 response from the server`, async () => {
 
   render(<Login />)
 
-  userEvent.type(screen.getByLabelText(/username/i), username)
-  userEvent.type(screen.getByLabelText(/password/i), password)
   userEvent.click(screen.getByRole('button', {name: /submit/i}))
 
   await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
