@@ -18,6 +18,7 @@ test('submitting the form calls onSubmit with username and password', () => {
   userEvent.click(screen.getByRole('button', {name: /submit/i}))
 
   expect(mockHandleSubmit).toHaveBeenCalledWith({username, password})
+  expect(mockHandleSubmit).toHaveBeenCalledTimes(1)
 })
 
 /*
