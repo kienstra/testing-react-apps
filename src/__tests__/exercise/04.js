@@ -11,19 +11,14 @@ test('submitting the form calls onSubmit with username and password', () => {
   const handleSubmit = data => (submittedData = data)
   render(<Login onSubmit={handleSubmit} />)
 
-  const mockUsername = 'obasidsfs'
-  const mockPassword = 'iguwbiwef'
-  const username = screen.getByLabelText(/username/i)
-  const password = screen.getByLabelText(/password/i)
+  const username = 'obasidsfs'
+  const password = 'iguwbiwef'
 
-  userEvent.type(username, mockUsername)
-  userEvent.type(password, mockPassword)
+  userEvent.type(screen.getByLabelText(/username/i), username)
+  userEvent.type(screen.getByLabelText(/password/i), password)
   userEvent.click(screen.getByRole('button', {name: /submit/i}))
 
-  expect(submittedData).toEqual({
-    username: mockUsername,
-    password: mockPassword,
-  })
+  expect(submittedData).toEqual({username, password})
 })
 
 /*
