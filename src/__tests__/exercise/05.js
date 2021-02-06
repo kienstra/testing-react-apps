@@ -21,7 +21,9 @@ const {username, password} = buildLoginForm()
 const server = setupServer(
   rest.post(
    'https://auth-provider.example.com/api/login',
-    async (req, res, ctx) => res(ctx.json({username}))
+    async (req, res, ctx) => {
+      return res(ctx.json({username: req.body.username}))
+    }
   )
 )
 
