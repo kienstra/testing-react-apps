@@ -9,8 +9,8 @@ import Login from '../../components/login'
 
 const buildLoginForm = build({
   fields: {
-    username: fake(faker => faker.internet.userName()),
-    password: fake(faker => faker.internet.password()),
+    username: fake(f => f.internet.userName()),
+    password: fake(f => f.internet.password()),
   }
 })
 
