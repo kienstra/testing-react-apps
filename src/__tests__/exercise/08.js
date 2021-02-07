@@ -5,7 +5,7 @@ import {act, renderHook} from '@testing-library/react-hooks'
 import useCounter from '../../components/use-counter'
 
 test('exposes the count and increment/decrement functions', () => {
-  const {result} = renderHook(() => useCounter())
+  const {result} = renderHook(useCounter)
 
   expect(result.current).toEqual({
     count: 0,
@@ -14,10 +14,10 @@ test('exposes the count and increment/decrement functions', () => {
   })
 
   act(() => result.current.increment())
-  expect(result.current.count).toEqual(1)
+  expect(result.current.count).toBe(1)
 
   act(() => result.current.decrement())
-  expect(result.current.count).toEqual(0)
+  expect(result.current.count).toBe(0)
 })
 
 test('allows customization of the initial count', () => {
@@ -25,31 +25,50 @@ test('allows customization of the initial count', () => {
     initialCount: 5,
   }
 
-  const {result} = renderHook(() => useCounter(options))
+  const {result} = renderHook(useCounter, {initialProps: options})
 
-  expect(result.current.count).toEqual(options.initialCount)
+  expect(result.current.count).toBe(options.initialCount)
 
   act(() => result.current.increment())
-  expect(result.current.count).toEqual(options.initialCount + 1)
+  expect(result.current.count).toBe(options.initialCount + 1)
 
   act(() => result.current.decrement())
-  expect(result.current.count).toEqual(options.initialCount)
+  expect(result.current.count).toBe(options.initialCount)
 })
 
 test('allows customization of the step', () => {
   const options = {
-    step: 10,
+    step: 10
   }
+  const {result} = renderHook(useCounter, {initialProps: options})
 
-  const {result} = renderHook(() => useCounter(options))
-
-  expect(result.current.count).toEqual(0)
+  expect(result.current.count).toBe(0)
 
   act(() => result.current.increment())
-  expect(result.current.count).toEqual(options.step)
+  expect(result.current.count).toBe(options.step)
 
   act(() => result.current.decrement())
-  expect(result.current.count).toEqual(0)
+  expect(result.current.count).toBe(0)
+})
+
+test('the step can be changed', () => {
+  const options = {
+    step: 10
+  }
+  const {rerender, result} = renderHook(useCounter, {initialProps: options})
+
+  expect(result.current.count).toBe(0)
+
+  act(() => result.current.increment())
+  expect(result.current.count).toBe(options.step)
+
+  const newOptions = {
+    step: 15,
+  }
+  rerender(newOptions)
+
+  act(() => result.current.increment())
+  expect(result.current.count).toBe(options.step + newOptions.step)
 })
 
 /* eslint no-unused-vars:0 */
