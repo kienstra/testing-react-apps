@@ -5,25 +5,31 @@ import * as React from 'react'
 import {act, render} from '@testing-library/react'
 import useCounter from '../../components/use-counter'
 
-test('exposes the count and increment/decrement functions', () => {
-  let result
+function setup(options) {
+  const results = {}
   function TestComponent(props) {
-    result = useCounter(props)
+    Object.assign(results, useCounter(props))
     return null
   }
-  render(<TestComponent />)
+  render(<TestComponent {...options} />)
 
-  expect(result).toEqual({
+  return results
+}
+
+test('exposes the count and increment/decrement functions', () => {
+  const results = setup()
+
+  expect(results).toEqual({
     count: 0,
     increment: expect.any(Function),
     decrement: expect.any(Function),
   })
 
-  act(() => result.increment())
-  expect(result.count).toEqual(1)
+  act(() => results.increment())
+  expect(results.count).toEqual(1)
 
-  act(() => result.decrement())
-  expect(result.count).toEqual(0)
+  act(() => results.decrement())
+  expect(results.count).toEqual(0)
 })
 
 test('applies options passed for initial state', () => {
@@ -32,24 +38,19 @@ test('applies options passed for initial state', () => {
     step: 10,
   }
 
-  let result
-  function TestComponent(props) {
-    result = useCounter(props)
-    return null
-  }
-  render(<TestComponent {...options} />)
+  const results = setup(options)
 
-  expect(result).toEqual({
+  expect(results).toEqual({
     count: options.initialCount,
     increment: expect.any(Function),
     decrement: expect.any(Function),
   })
 
-  act(() => result.increment())
-  expect(result.count).toEqual(options.initialCount + options.step)
+  act(() => results.increment())
+  expect(results.count).toEqual(options.initialCount + options.step)
 
-  act(() => result.decrement())
-  expect(result.count).toEqual(options.initialCount)
+  act(() => results.decrement())
+  expect(results.count).toEqual(options.initialCount)
 })
 
 /* eslint no-unused-vars:0 */
