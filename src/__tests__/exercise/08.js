@@ -2,43 +2,54 @@
 // http://localhost:3000/counter-hook
 
 import * as React from 'react'
-import {render, screen} from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import {act, render} from '@testing-library/react'
 import useCounter from '../../components/use-counter'
 
-// 🐨 create a simple function component that uses the useCounter hook
-// and then exposes some UI that our test can interact with to test the
-// capabilities of this hook
-// 💰 here's how to use the hook:
-function Counter() {
-  const {count, increment, decrement} = useCounter()
-
-  return (
-    <div>
-      <button
-        onClick={ () => increment() }
-      >
-        Increment
-      </button>
-      <button
-        onClick={ () => decrement() }
-      >
-        Decrement
-      </button>
-      <span>{ `The count is ${ count }` }</span>
-    </div>
-  )
-}
-
 test('exposes the count and increment/decrement functions', () => {
-  render(<Counter />)
-  expect(screen.getByText(/count/i)).toHaveTextContent('The count is 0')
+  let result
+  function TestComponent(props) {
+    result = useCounter(props)
+    return null
+  }
+  render(<TestComponent />)
 
-  userEvent.click(screen.getByRole('button', {name: /increment/i}))
-  expect(screen.getByText(/count/i)).toHaveTextContent('The count is 1')
+  expect(result).toEqual({
+    count: 0,
+    increment: expect.any(Function),
+    decrement: expect.any(Function),
+  })
 
-  userEvent.click(screen.getByRole('button', {name: /decrement/i}))
-  expect(screen.getByText(/count/i)).toHaveTextContent('The count is 0')
+  act(() => result.increment())
+  expect(result.count).toEqual(1)
+
+  act(() => result.decrement())
+  expect(result.count).toEqual(0)
+})
+
+test('applies options passed for initial state', () => {
+  const options = {
+    initialCount: 5,
+    step: 10,
+  }
+
+  let result
+  function TestComponent(props) {
+    result = useCounter(props)
+    return null
+  }
+  render(<TestComponent {...options} />)
+
+  expect(result).toEqual({
+    count: options.initialCount,
+    increment: expect.any(Function),
+    decrement: expect.any(Function),
+  })
+
+  act(() => result.increment())
+  expect(result.count).toEqual(options.initialCount + options.step)
+
+  act(() => result.decrement())
+  expect(result.count).toEqual(options.initialCount)
 })
 
 /* eslint no-unused-vars:0 */
