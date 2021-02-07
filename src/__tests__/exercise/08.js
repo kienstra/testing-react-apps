@@ -1,35 +1,23 @@
 // testing custom hooks
 // http://localhost:3000/counter-hook
 
-import * as React from 'react'
-import {act, render} from '@testing-library/react'
+import {act, renderHook} from '@testing-library/react-hooks'
 import useCounter from '../../components/use-counter'
 
-function setup(options = {}) {
-  const results = {}
-  function TestComponent() {
-    Object.assign(results, useCounter(options))
-    return null
-  }
-  render(<TestComponent />)
-
-  return results
-}
-
 test('exposes the count and increment/decrement functions', () => {
-  const results = setup()
+  const {result} = renderHook(() => useCounter())
 
-  expect(results).toEqual({
+  expect(result.current).toEqual({
     count: 0,
     increment: expect.any(Function),
     decrement: expect.any(Function),
   })
 
-  act(() => results.increment())
-  expect(results.count).toEqual(1)
+  act(() => result.current.increment())
+  expect(result.current.count).toEqual(1)
 
-  act(() => results.decrement())
-  expect(results.count).toEqual(0)
+  act(() => result.current.decrement())
+  expect(result.current.count).toEqual(0)
 })
 
 test('allows customization of the initial count', () => {
@@ -37,15 +25,15 @@ test('allows customization of the initial count', () => {
     initialCount: 5,
   }
 
-  const results = setup(options)
+  const {result} = renderHook(() => useCounter(options))
 
-  expect(results.count).toEqual(options.initialCount)
+  expect(result.current.count).toEqual(options.initialCount)
 
-  act(() => results.increment())
-  expect(results.count).toEqual(options.initialCount + 1)
+  act(() => result.current.increment())
+  expect(result.current.count).toEqual(options.initialCount + 1)
 
-  act(() => results.decrement())
-  expect(results.count).toEqual(options.initialCount)
+  act(() => result.current.decrement())
+  expect(result.current.count).toEqual(options.initialCount)
 })
 
 test('allows customization of the step', () => {
@@ -53,15 +41,15 @@ test('allows customization of the step', () => {
     step: 10,
   }
 
-  const results = setup(options)
+  const {result} = renderHook(() => useCounter(options))
 
-  expect(results.count).toEqual(0)
+  expect(result.current.count).toEqual(0)
 
-  act(() => results.increment())
-  expect(results.count).toEqual(options.step)
+  act(() => result.current.increment())
+  expect(result.current.count).toEqual(options.step)
 
-  act(() => results.decrement())
-  expect(results.count).toEqual(0)
+  act(() => result.current.decrement())
+  expect(result.current.count).toEqual(0)
 })
 
 /* eslint no-unused-vars:0 */
